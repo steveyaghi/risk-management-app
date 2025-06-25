@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .mode-option {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .mode-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .mode-option.active {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+        
+        .mode-option h3 {
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .mode-option p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .file-upload-area {
+            border: 3px dashed #cbd5e0;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+        
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background: #e6fffa;
+        }
+        
+        .file-upload-area.has-file {
+            border-color: #48bb78;
+            background: #c6f6d5;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.6;
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            text-align: left;
+        }
+        
+        .file-actions {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f8ff;
+            border-radius: 10px;
+            border: 1px solid #bee3f8;
+        }
+        
+        .file-actions.show {
+            display: block;
+        }
+        
+        .file-actions h3 {
+            color: #2a4365;
+            margin-bottom: 15px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #bee3f8;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+        
+        .action-btn.selected {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+        
+        .comparison-options {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff5f5;
+            border-radius: 10px;
+            border: 1px solid #fed7d7;
+        }
+        
+        .comparison-options.show {
+            display: block;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .mode-selector {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Risk Management System</h1>
+            <p>Generate new risk registers or compare existing ones</p>
+        </div>
+        
+        <!-- Mode Selection -->
+        <div class="mode-selector">
+            <div class="mode-option active" onclick="selectMode('manual')">
+                <h3>📝 Manual Entry</h3>
+                <p>Fill in project details to generate a new risk register</p>
+            </div>
+            <div class="mode-option" onclick="selectMode('upload')">
+                <h3>📄 Upload File</h3>
+                <p>Upload an existing risk register for analysis or comparison</p>
+            </div>
+        </div>
+        
+        <!-- Manual Entry Form -->
+        <div id="manual-section" class="form-section active">
+            <div class="form-group">
+                <label for="projectName">Project Name *</label>
+                <input type="text" id="projectName" required placeholder="Enter your project name">
+            </div>
+            
+            <div class="form-group">
+                <label for="projectType">Project Type *</label>
+                <select id="projectType" required>
+                    <option value="">Select project type...</option>
+                    <option value="infrastructure">Infrastructure</option>
+                    <option value="it">IT/Software</option>
+                    <option value="construction">Construction</option>
+                    <option value="energy">Energy</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="finance">Finance</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="projectTimeline">Project Timeline *</label>
+                <input type="text" id="projectTimeline" required placeholder="e.g., 18 months, 2 years">
+            </div>
+            
+            <div class="form-group">
+                <label for="countryRegion">Country/Region *</label>
+                <input type="text" id="countryRegion" required placeholder="e.g., Netherlands, Europe">
+            </div>
+            
+            <div class="form-group">
+                <label for="riskMethodology">Risk Methodology *</label>
+                <select id="riskMethodology" required>
+                    <option value="">Select methodology...</option>
+                    <option value="3x3">3x3 Matrix</option>
+                    <option value="5x5">5x5 Matrix</option>
+                    <option value="10x10">10x10 Matrix</option>
+                    <option value="qualitative">Qualitative</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="numberOfRisks">Number of Desired Risks *</label>
+                <input type="number" id="numberOfRisks" required min="5" max="50" value="15" placeholder="15">
+            </div>
+            
+            <div class="form-group">
+                <label for="budgetRange">Project Budget Range *</label>
+                <input type="text" id="budgetRange" required placeholder="e.g., €1-5 million">
+            </div>
+            
+            <div class="form-group">
+                <label for="additionalContext">Additional Context</label>
+                <textarea id="additionalContext" placeholder="Any specific risks, constraints, or requirements to consider..."></textarea>
+            </div>
+            
+            <button class="btn" onclick="generateNewRiskRegister()">
+                🚀 Generate Risk Register
+            </button>
+        </div>
+        
+        <!-- File Upload Section -->
+        <div id="upload-section" class="form-section">
+            <div class="file-upload-area" id="fileUploadArea">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Drag & drop your risk register here</div>
+                <div class="upload-subtext">or click to browse (.xlsx, .xls, .csv files)</div>
+                <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display: none;">
+                <div class="file-info" id="fileInfo" style="display: none;"></div>
+            </div>
+            
+            <!-- File Actions -->
+            <div class="file-actions" id="fileActions">
+                <h3>What would you like to do with this file?</h3>
+                <div class="action-buttons">
+                    <div class="action-btn" onclick="selectAction('generate')">
+                        <h4>🎯 Generate Report</h4>
+                        <p>Analyze this risk register and create insights</p>
+                    </div>
+                    <div class="action-btn" onclick="selectAction('compare')">
+                        <h4>⚖️ Compare Versions</h4>
+                        <p>Compare with another risk register or generate new one for comparison</p>
+                    </div>
+                </div>
+                
+                <!-- Comparison Options -->
+                <div class="comparison-options" id="comparisonOptions">
+                    <h4>Comparison Options:</h4>
+                    <div class="form-group">
+                        <label>
+                            <input type="radio" name="comparisonType" value="upload_second"> 
+                            Upload a second file to compare with
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="radio" name="comparisonType" value="generate_new"> 
+                            Generate a new risk register based on updated project info and compare
+                        </label>
+                    </div>
+                    
+                    <div id="secondFileUpload" class="hidden">
+                        <div class="file-upload-area" style="margin-top: 15px; padding: 20px;">
+                            <div class="upload-text">Upload second risk register</div>
+                            <input type="file" id="secondFileInput" accept=".xlsx,.xls,.csv" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <div id="newProjectForm" class="hidden">
+                        <!-- Mini form for new generation -->
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            <h5>Updated Project Information:</h5>
+                            <div class="form-group">
+                                <label>Project Name</label>
+                                <input type="text" id="compareProjectName" placeholder="Updated project name">
+                            </div>
+                            <div class="form-group">
+                                <label>What has changed?</label>
+                                <textarea id="projectChanges" placeholder="Describe what has changed in the project since the original risk register..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" id="processBtn" onclick="processFile()" disabled>
+                    🔄 Process File
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentMode = 'manual';
+        let uploadedFile = null;
+        let selectedAction = null;
+        let secondFile = null;
+        
+        function selectMode(mode) {
+            currentMode = mode;
+            
+            // Update mode selector
+            document.querySelectorAll('.mode-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.target.closest('.mode-option').classList.add('active');
+            
+            // Show/hide sections
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(mode + '-section').classList.add('active');
+        }
+        
+        // File upload setup
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('fileInput');
+        
+        fileUploadArea.addEventListener('click', () => fileInput.click());
+        
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+        
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.classList.remove('dragover');
+        });
+        
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+        
+        function handleFileUpload(file) {
+            // Validate file type
+            const validTypes = ['.xlsx', '.xls', '.csv'];
+            const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+            
+            if (!validTypes.includes(fileExtension)) {
+                alert('Please upload only Excel (.xlsx, .xls) or CSV files.');
+                return;
+            }
+            
+            uploadedFile = file;
+            
+            // Update UI
+            fileUploadArea.classList.add('has-file');
+            
+            const fileSize = (file.size / 1024 / 1024).toFixed(2);
+            const fileInfo = document.getElementById('fileInfo');
+            fileInfo.innerHTML = `
+                <div style="font-weight: 600; color: #2d3748; margin-bottom: 5px;">
+                    📄 ${file.name}
+                </div>
+                <div style="font-size: 0.9rem; color: #718096;">
+                    Size: ${fileSize} MB | Type: ${file.type || 'Excel/CSV'}
+                </div>
+            `;
+            fileInfo.style.display = 'block';
+            
+            // Show file actions
+            document.getElementById('fileActions').classList.add('show');
+        }
+        
+        function selectAction(action) {
+            selectedAction = action;
+            
+            // Update button states
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.closest('.action-btn').classList.add('selected');
+            
+            // Show/hide comparison options
+            const comparisonOptions = document.getElementById('comparisonOptions');
+            if (action === 'compare') {
+                comparisonOptions.classList.add('show');
+            } else {
+                comparisonOptions.classList.remove('show');
+            }
+            
+            updateProcessButton();
+        }
+        
+        // Handle comparison type selection
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'comparisonType') {
+                const value = e.target.value;
+                const secondFileUpload = document.getElementById('secondFileUpload');
+                const newProjectForm = document.getElementById('newProjectForm');
+                
+                if (value === 'upload_second') {
+                    secondFileUpload.classList.remove('hidden');
+                    newProjectForm.classList.add('hidden');
+                } else if (value === 'generate_new') {
+                    secondFileUpload.classList.add('hidden');
+                    newProjectForm.classList.remove('hidden');
+                }
+                
+                updateProcessButton();
+            }
+        });
+        
+        function updateProcessButton() {
+            const processBtn = document.getElementById('processBtn');
+            
+            if (selectedAction === 'generate') {
+                processBtn.disabled = false;
+                processBtn.textContent = '📊 Generate Analysis Report';
+            } else if (selectedAction === 'compare') {
+                const comparisonType = document.querySelector('input[name="comparisonType"]:checked');
+                if (comparisonType) {
+                    processBtn.disabled = false;
+                    if (comparisonType.value === 'upload_second') {
+                        processBtn.textContent = '⚖️ Compare Files';
+                    } else {
+                        processBtn.textContent = '🔄 Generate & Compare';
+                    }
+                } else {
+                    processBtn.disabled = true;
+                    processBtn.textContent = 'Select comparison option';
+                }
+            }
+        }
+        
+        function generateNewRiskRegister() {
+            // Collect form data
+            const formData = {
+                mode: 'generate_new',
+                projectName: document.getElementById('projectName').value,
+                projectType: document.getElementById('projectType').value,
+                projectTimeline: document.getElementById('projectTimeline').value,
+                countryRegion: document.getElementById('countryRegion').value,
+                riskMethodology: document.getElementById('riskMethodology').value,
+                numberOfRisks: document.getElementById('numberOfRisks').value,
+                budgetRange: document.getElementById('budgetRange').value,
+                additionalContext: document.getElementById('additionalContext').value
+            };
+            
+            // Validate required fields
+            const requiredFields = ['projectName', 'projectType', 'projectTimeline', 'countryRegion', 'riskMethodology', 'numberOfRisks', 'budgetRange'];
+            for (let field of requiredFields) {
+                if (!formData[field]) {
+                    alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+                    return;
+                }
+            }
+            
+            console.log('Generating new risk register with data:', formData);
+            
+            // TODO: Send to n8n webhook
+            alert('Risk register generation started! This will be connected to your n8n workflow.');
+        }
+        
+        function processFile() {
+            if (!uploadedFile || !selectedAction) {
+                alert('Please upload a file and select an action.');
+                return;
+            }
+            
+            const processData = {
+                mode: selectedAction,
+                file: uploadedFile,
+                fileName: uploadedFile.name
+            };
+            
+            if (selectedAction === 'compare') {
+                const comparisonType = document.querySelector('input[name="comparisonType"]:checked').value;
+                processData.comparisonType = comparisonType;
+                
+                if (comparisonType === 'upload_second') {
+                    // Handle second file upload
+                    processData.secondFile = secondFile;
+                } else if (comparisonType === 'generate_new') {
+                    // Handle new project info
+                    processData.compareProjectName = document.getElementById('compareProjectName').value;
+                    processData.projectChanges = document.getElementById('projectChanges').value;
+                }
+            }
+            
+            console.log('Processing file with data:', processData);
+            
+            // TODO: Send to n8n webhook
+            alert('File processing started! This will be connected to your n8n workflow.');
+        }
+    </script>
+</body>
+</html>
