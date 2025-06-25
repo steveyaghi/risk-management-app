@@ -559,7 +559,7 @@
             }
         }
         
-        function generateNewRiskRegister() {
+        async function generateNewRiskRegister() {
             // Collect form data
             const formData = {
                 mode: 'generate_new',
@@ -582,42 +582,67 @@
                 }
             }
             
-            console.log('Generating new risk register with data:', formData);
-            
-            // TODO: Send to n8n webhook
-            alert('Risk register generation started! This will be connected to your n8n workflow.');
+            // Send to n8n webhook
+            try {
+                const response = await fetch('https://steveyaghi.app.n8n.cloud/webhook-test/risk-webapp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    alert('✅ Risk register generation started! Check your Google Sheets for results.');
+                } else {
+                    alert('❌ Error starting generation. Please try again.');
+                }
+            } catch (error) {
+                alert('❌ Connection error. Please check your internet connection.');
+            }
         }
         
-        function processFile() {
+        async function processFile() {
             if (!uploadedFile || !selectedAction) {
                 alert('Please upload a file and select an action.');
                 return;
             }
             
+            // For now, we'll just handle the file info (not the actual file content)
             const processData = {
                 mode: selectedAction,
-                file: uploadedFile,
-                fileName: uploadedFile.name
+                fileName: uploadedFile.name,
+                fileSize: uploadedFile.size
             };
             
             if (selectedAction === 'compare') {
                 const comparisonType = document.querySelector('input[name="comparisonType"]:checked').value;
                 processData.comparisonType = comparisonType;
                 
-                if (comparisonType === 'upload_second') {
-                    // Handle second file upload
-                    processData.secondFile = secondFile;
-                } else if (comparisonType === 'generate_new') {
-                    // Handle new project info
+                if (comparisonType === 'generate_new') {
                     processData.compareProjectName = document.getElementById('compareProjectName').value;
                     processData.projectChanges = document.getElementById('projectChanges').value;
                 }
             }
             
-            console.log('Processing file with data:', processData);
-            
-            // TODO: Send to n8n webhook
-            alert('File processing started! This will be connected to your n8n workflow.');
+            // Send to n8n webhook
+            try {
+                const response = await fetch('https://steveyaghi.app.n8n.cloud/webhook-test/risk-webapp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(processData)
+                });
+                
+                if (response.ok) {
+                    alert('✅ File processing started!');
+                } else {
+                    alert('❌ Error processing file. Please try again.');
+                }
+            } catch (error) {
+                alert('❌ Connection error. Please check your internet connection.');
+            }
         }
     </script>
 </body>
