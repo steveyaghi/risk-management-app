@@ -692,18 +692,39 @@
                 });
                 
                 if (response.ok) {
+                    const result = await response.json();
                     hideProgress('compareProgress');
-                    showSuccess('compareSuccess', 'Risk register comparison completed! The comparison report has been saved to your Google Drive.');
+                    
+                    if (result.success && result.report) {
+                        // Download the report
+                        downloadReport(result.report, result.filename || 'Risk_Comparison_Report.txt');
+                        showSuccess('compareSuccess', 'Risk register comparison completed! The report has been downloaded.');
+                    } else {
+                        throw new Error('No report content received');
+                    }
                 } else {
                     throw new Error('Server error');
                 }
             } catch (error) {
                 hideProgress('compareProgress');
-                showError('compareError', 'Failed to compare risk registers. Please check your files and internet connection, then try again.');
+                showError('compareError', 'Failed to compare risk registers. Error: ' + error.message);
             } finally {
                 compareBtn.classList.remove('processing');
                 compareBtn.textContent = '⚖️ Compare Risk Registers';
             }
+        }
+        
+        // Add this new function
+        function downloadReport(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
         }
     </script>
 </body>
