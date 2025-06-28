@@ -649,70 +649,69 @@
         }
         
         async function compareRegisters() {
-            if (!uploadedFiles.file1 || !uploadedFiles.file2) {
-                showError('compareError', 'Please upload both risk registers before comparing.');
-                return;
-            }
+    if (!uploadedFiles.file1 || !uploadedFiles.file2) {
+        showError('compareError', 'Please upload both risk registers before comparing.');
+        return;
+    }
+    
+    // Update UI
+    const compareBtn = document.getElementById('compareBtn');
+    compareBtn.classList.add('processing');
+    compareBtn.textContent = '';
+    showProgress('compareProgress');
+    
+    try {
+        // Convert files to base64
+        const file1Base64 = await fileToBase64(uploadedFiles.file1);
+        const file2Base64 = await fileToBase64(uploadedFiles.file2);
+        
+        const comparisonData = {
+            mode: 'compare_registers',
+            file1: {
+                name: uploadedFiles.file1.name,
+                content: file1Base64,
+                type: uploadedFiles.file1.type,
+                size: uploadedFiles.file1.size
+            },
+            file2: {
+                name: uploadedFiles.file2.name,
+                content: file2Base64,
+                type: uploadedFiles.file2.type,
+                size: uploadedFiles.file2.size
+            },
+            comparisonContext: document.getElementById('comparisonContext').value
+        };
+        
+        // Send to n8n webhook
+        const response = await fetch('https://steveyaghi.app.n8n.cloud/webhook/risk-webapp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(comparisonData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            hideProgress('compareProgress');
             
-            // Update UI
-            const compareBtn = document.getElementById('compareBtn');
-            compareBtn.classList.add('processing');
-            compareBtn.textContent = '';
-            showProgress('compareProgress');
-            
-            try {
-                // Convert files to base64
-                const file1Base64 = await fileToBase64(uploadedFiles.file1);
-                const file2Base64 = await fileToBase64(uploadedFiles.file2);
-                
-                const comparisonData = {
-                    mode: 'compare_registers',
-                    file1: {
-                        name: uploadedFiles.file1.name,
-                        content: file1Base64,
-                        type: uploadedFiles.file1.type,
-                        size: uploadedFiles.file1.size
-                    },
-                    file2: {
-                        name: uploadedFiles.file2.name,
-                        content: file2Base64,
-                        type: uploadedFiles.file2.type,
-                        size: uploadedFiles.file2.size
-                    },
-                    comparisonContext: document.getElementById('comparisonContext').value
-                };
-                
-                // Send to n8n webhook
-                const response = await fetch('https://steveyaghi.app.n8n.cloud/webhook/risk-webapp', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(comparisonData)
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    hideProgress('compareProgress');
-                    
-                    if (result.success && result.report) {
-                        // Download the report
-                        downloadReport(result.report, result.filename || 'Risk_Comparison_Report.txt');
-                        showSuccess('compareSuccess', 'Risk register comparison completed! The report has been downloaded.');
-                    } else {
-                        throw new Error('No report content received');
-                    }
-                } else {
-                    throw new Error('Server error');
-                }
-            } catch (error) {
-                hideProgress('compareProgress');
-                showError('compareError', 'Failed to compare risk registers. Error: ' + error.message);
-            } finally {
-                compareBtn.classList.remove('processing');
-                compareBtn.textContent = '⚖️ Compare Risk Registers';
+            if (result.success && result.report) {
+                downloadReport(result.report, result.filename || 'Risk_Comparison_Report.doc');
+                showSuccess('compareSuccess', 'Risk register comparison completed! The report has been downloaded.');
+            } else {
+                throw new Error('No report content received');
             }
+        } else {
+            throw new Error('Server error');
         }
+    } catch (error) {
+        hideProgress('compareProgress');
+        showError('compareError', 'Failed to compare risk registers. Error: ' + error.message);
+    } finally {
+        compareBtn.classList.remove('processing');
+        compareBtn.textContent = '⚖️ Compare Risk Registers';
+    }
+}
         
         // Add this new function
         function downloadReport(content, filename) {
