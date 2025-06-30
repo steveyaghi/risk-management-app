@@ -312,6 +312,196 @@
             display: none;
         }
         
+        /* Risk Dashboard Styles */
+        .risk-dashboard {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            border: 2px solid #cbd5e0;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .dashboard-header h2 {
+            color: #2d3748;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        
+        .dashboard-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            padding: 10px 20px;
+            font-size: 14px;
+            width: auto;
+            margin: 0;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #718096;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .metric-detail {
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+        
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-container h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .insights-section {
+            margin-bottom: 30px;
+        }
+        
+        .insights-section h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .insight-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .insight-card.positive {
+            border-left: 4px solid #48bb78;
+        }
+        
+        .insight-card.warning {
+            border-left: 4px solid #ed8936;
+        }
+        
+        .insight-card.improvement {
+            border-left: 4px solid #667eea;
+        }
+        
+        .insight-icon {
+            font-size: 1.5rem;
+            margin-top: 2px;
+        }
+        
+        .insight-content h4 {
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .insight-content p {
+            color: #718096;
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .detailed-report {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .detailed-report h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        
+        .report-content {
+            color: #4a5568;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        
+        .report-content h1, .report-content h2, .report-content h3 {
+            color: #2d3748;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .report-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .report-content th, .report-content td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .report-content th {
+            background-color: #f7fafc;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
         @media (max-width: 768px) {
             .mode-selector {
                 flex-direction: column;
@@ -466,7 +656,94 @@
                 
                 <div class="success-message" id="compareSuccess">
                     <strong>✅ Comparison completed successfully!</strong><br>
-                    Your comparison report has been generated and saved to Google Drive.
+                    Your comparison report has been generated and displayed below.
+                </div>
+                
+                <!-- Risk Dashboard Display -->
+                <div class="risk-dashboard" id="riskDashboard" style="display: none;">
+                    <div class="dashboard-header">
+                        <h2>🛡️ Risk Register Comparison Dashboard</h2>
+                        <div class="dashboard-actions">
+                            <button class="btn download-btn" onclick="downloadReport()">
+                                📄 Download Report
+                            </button>
+                            <button class="btn download-btn" onclick="downloadDashboard()">
+                                📊 Download Dashboard
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Key Metrics -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value" id="totalRisksChange">+6</div>
+                            <div class="metric-label">Total Risks Change</div>
+                            <div class="metric-detail" id="riskCountDetail">45 → 51 risks</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="highRiskChange">+3</div>
+                            <div class="metric-label">High Risk Change</div>
+                            <div class="metric-detail" id="highRiskDetail">15 → 18 risks</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="newRisks">6</div>
+                            <div class="metric-label">New Risks Added</div>
+                            <div class="metric-detail">Identified in new register</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="modifiedRisks">8</div>
+                            <div class="metric-label">Modified Risks</div>
+                            <div class="metric-detail">Updated assessments</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Section -->
+                    <div class="charts-section">
+                        <div class="chart-container">
+                            <h3>Risk Level Distribution</h3>
+                            <canvas id="riskLevelChart" width="400" height="200"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Risk Evolution Timeline</h3>
+                            <canvas id="riskTimelineChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Key Strategic Insights -->
+                    <div class="insights-section">
+                        <h3>💡 Key Strategic Insights</h3>
+                        <div class="insights-grid">
+                            <div class="insight-card positive">
+                                <div class="insight-icon">✅</div>
+                                <div class="insight-content">
+                                    <h4>Proactive Risk Management</h4>
+                                    <p id="positiveInsight">6 new risks identified showing enhanced risk awareness</p>
+                                </div>
+                            </div>
+                            <div class="insight-card warning">
+                                <div class="insight-icon">⚠️</div>
+                                <div class="insight-content">
+                                    <h4>Areas of Focus</h4>
+                                    <p id="warningInsight">Increase in high-level risks requires attention</p>
+                                </div>
+                            </div>
+                            <div class="insight-card improvement">
+                                <div class="insight-icon">📈</div>
+                                <div class="insight-content">
+                                    <h4>Risk Maturity Growth</h4>
+                                    <p id="improvementInsight">Enhanced risk descriptions and mitigation strategies</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed Report -->
+                    <div class="detailed-report">
+                        <h3>📋 Detailed Analysis Report</h3>
+                        <div class="report-content" id="reportContent">
+                            <!-- Report content will be inserted here -->
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="error-message" id="compareError">
