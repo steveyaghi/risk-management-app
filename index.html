@@ -789,6 +789,18 @@
                     </div>
                 </div>
                 
+                <!-- Additional Visualizations -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <h3>Risk Category Breakdown</h3>
+                        <canvas id="categoryChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Risk Trend Analysis</h3>
+                        <canvas id="trendChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                
                 <!-- Key Strategic Insights -->
                 <div class="insights-section">
                     <h3>💡 Key Strategic Insights</h3>
@@ -1086,6 +1098,8 @@
             setTimeout(() => {
                 createRiskLevelChart(metrics);
                 createTimelineChart(metrics);
+                createCategoryChart(metrics);
+                createTrendChart(metrics);
             }, 100);
             
             // Scroll to dashboard
@@ -1185,10 +1199,11 @@
             
             ctx.clearRect(0, 0, width, height);
             
-            const barWidth = 60;
-            const barSpacing = 80;
-            const startX = 50;
-            const maxValue = Math.max(...data.oldData, ...data.newData);
+            const barWidth = 50;
+            const barSpacing = 40;
+            const startX = 60;
+            const maxValue = Math.max(...data.oldData, ...data.newData) || 1;
+            const chartHeight = height - 80;
             
             // Colors matching Haskoning theme
             const oldColor = '#0f2a44';
@@ -1196,42 +1211,51 @@
             
             data.labels.forEach((label, index) => {
                 const x = startX + index * (barWidth * 2 + barSpacing);
-                const oldHeight = (data.oldData[index] / maxValue) * (height - 60);
-                const newHeight = (data.newData[index] / maxValue) * (height - 60);
+                const oldHeight = (data.oldData[index] / maxValue) * chartHeight;
+                const newHeight = (data.newData[index] / maxValue) * chartHeight;
                 
                 // Draw old data bar
                 ctx.fillStyle = oldColor;
-                ctx.fillRect(x, height - oldHeight - 30, barWidth, oldHeight);
+                ctx.fillRect(x, height - oldHeight - 50, barWidth, oldHeight);
                 
                 // Draw new data bar
                 ctx.fillStyle = newColor;
-                ctx.fillRect(x + barWidth + 10, height - newHeight - 30, barWidth, newHeight);
+                ctx.fillRect(x + barWidth + 5, height - newHeight - 50, barWidth, newHeight);
                 
                 // Draw labels
                 ctx.fillStyle = '#0f2a44';
-                ctx.font = '12px Inter';
+                ctx.font = 'bold 11px Inter';
                 ctx.textAlign = 'center';
-                ctx.fillText(label, x + barWidth, height - 10);
+                ctx.fillText(label, x + barWidth + 2, height - 25);
                 
-                // Draw values
-                ctx.fillStyle = '#718096';
-                ctx.font = '10px Inter';
-                ctx.fillText(data.oldData[index], x + barWidth/2, height - oldHeight - 35);
-                ctx.fillText(data.newData[index], x + barWidth + 10 + barWidth/2, height - newHeight - 35);
+                // Draw values on bars
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 10px Inter';
+                if (oldHeight > 20) {
+                    ctx.fillText(data.oldData[index], x + barWidth/2, height - oldHeight/2 - 45);
+                }
+                if (newHeight > 20) {
+                    ctx.fillText(data.newData[index], x + barWidth + 5 + barWidth/2, height - newHeight/2 - 45);
+                }
             });
             
-            // Legend
-            ctx.fillStyle = oldColor;
-            ctx.fillRect(width - 150, 20, 15, 15);
-            ctx.fillStyle = '#0f2a44';
-            ctx.font = '12px Inter';
-            ctx.textAlign = 'left';
-            ctx.fillText('Previous', width - 130, 32);
+            // Fixed Legend positioning
+            const legendY = 15;
+            const legendX = 50;
             
-            ctx.fillStyle = newColor;
-            ctx.fillRect(width - 150, 40, 15, 15);
+            // Previous legend
+            ctx.fillStyle = oldColor;
+            ctx.fillRect(legendX, legendY, 12, 12);
             ctx.fillStyle = '#0f2a44';
-            ctx.fillText('Current', width - 130, 52);
+            ctx.font = '11px Inter';
+            ctx.textAlign = 'left';
+            ctx.fillText('Previous', legendX + 18, legendY + 9);
+            
+            // Current legend
+            ctx.fillStyle = newColor;
+            ctx.fillRect(legendX + 80, legendY, 12, 12);
+            ctx.fillStyle = '#0f2a44';
+            ctx.fillText('Current', legendX + 102, legendY + 9);
         }
         
         function drawLineChart(ctx, data) {
@@ -1241,9 +1265,35 @@
             
             ctx.clearRect(0, 0, width, height);
             
+            const padding = 60;
+            const chartWidth = width - (padding * 2);
+            const chartHeight = height - (padding * 2);
+            
             const maxValue = Math.max(...data.data);
             const minValue = Math.min(...data.data);
             const range = maxValue - minValue || 1;
+            
+            // Draw grid lines
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            
+            // Horizontal grid lines
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (i * chartHeight / 5);
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Vertical grid lines
+            for (let i = 0; i < data.labels.length; i++) {
+                const x = padding + (i * chartWidth / (data.labels.length - 1));
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, height - padding);
+                ctx.stroke();
+            }
             
             // Draw line
             ctx.beginPath();
@@ -1251,30 +1301,227 @@
             ctx.lineWidth = 3;
             
             data.data.forEach((value, index) => {
-                const x = 50 + (index * (width - 100));
-                const y = height - 50 - ((value - minValue) / range) * (height - 100);
+                const x = padding + (index * chartWidth / (data.labels.length - 1));
+                const y = height - padding - ((value - minValue) / range) * chartHeight;
                 
                 if (index === 0) {
                     ctx.moveTo(x, y);
                 } else {
                     ctx.lineTo(x, y);
                 }
+            });
+            ctx.stroke();
+            
+            // Draw points and labels
+            data.data.forEach((value, index) => {
+                const x = padding + (index * chartWidth / (data.labels.length - 1));
+                const y = height - padding - ((value - minValue) / range) * chartHeight;
                 
-                // Draw points
+                // Draw point
                 ctx.fillStyle = '#81c784';
                 ctx.beginPath();
                 ctx.arc(x, y, 6, 0, 2 * Math.PI);
                 ctx.fill();
                 
+                // Draw point border
+                ctx.strokeStyle = '#0f2a44';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
                 // Draw labels
                 ctx.fillStyle = '#0f2a44';
-                ctx.font = '12px Inter';
+                ctx.font = 'bold 11px Inter';
                 ctx.textAlign = 'center';
                 ctx.fillText(data.labels[index], x, height - 20);
+                
+                // Draw values
+                ctx.font = 'bold 10px Inter';
                 ctx.fillText(value, x, y - 15);
             });
+        }
+        
+        function createCategoryChart(metrics) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
             
-            ctx.stroke();
+            // Sample category data - you can enhance this based on your report parsing
+            const categoryData = {
+                labels: ['Technical', 'Financial', 'Operational', 'Regulatory'],
+                data: [8, 6, 4, 3],
+                colors: ['#0f2a44', '#81c784', '#ffab40', '#64b5f6']
+            };
+            
+            drawPieChart(ctx, categoryData);
+        }
+        
+        function createTrendChart(metrics) {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            
+            const trendData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'High Risk',
+                        data: [12, 14, 13, 15, 16, metrics.highRisksNew],
+                        color: '#ff6b6b'
+                    },
+                    {
+                        label: 'Medium Risk', 
+                        data: [18, 19, 20, 21, 20, metrics.mediumRisksNew],
+                        color: '#ffab40'
+                    },
+                    {
+                        label: 'Low Risk',
+                        data: [8, 9, 10, 11, 10, metrics.lowRisksNew],
+                        color: '#81c784'
+                    }
+                ]
+            };
+            
+            drawMultiLineChart(ctx, trendData);
+        }
+        
+        function drawPieChart(ctx, data) {
+            const canvas = ctx.canvas;
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 3;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            const total = data.data.reduce((sum, value) => sum + value, 0);
+            let currentAngle = -Math.PI / 2; // Start from top
+            
+            // Draw pie slices
+            data.data.forEach((value, index) => {
+                const sliceAngle = (value / total) * 2 * Math.PI;
+                
+                // Draw slice
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = data.colors[index];
+                ctx.fill();
+                
+                // Draw border
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Draw label
+                const labelAngle = currentAngle + sliceAngle / 2;
+                const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
+                const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(value, labelX, labelY);
+                
+                currentAngle += sliceAngle;
+            });
+            
+            // Draw legend
+            data.labels.forEach((label, index) => {
+                const legendY = 20 + index * 20;
+                
+                ctx.fillStyle = data.colors[index];
+                ctx.fillRect(20, legendY, 12, 12);
+                
+                ctx.fillStyle = '#0f2a44';
+                ctx.font = '11px Inter';
+                ctx.textAlign = 'left';
+                ctx.fillText(label, 38, legendY + 9);
+            });
+        }
+        
+        function drawMultiLineChart(ctx, data) {
+            const canvas = ctx.canvas;
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            const padding = 60;
+            const chartWidth = width - (padding * 2);
+            const chartHeight = height - (padding * 2);
+            
+            // Find max value across all datasets
+            const allValues = data.datasets.flatMap(dataset => dataset.data);
+            const maxValue = Math.max(...allValues);
+            const minValue = 0;
+            const range = maxValue - minValue || 1;
+            
+            // Draw grid
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            
+            // Horizontal grid lines
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (i * chartHeight / 5);
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Draw each dataset
+            data.datasets.forEach((dataset, datasetIndex) => {
+                ctx.beginPath();
+                ctx.strokeStyle = dataset.color;
+                ctx.lineWidth = 2;
+                
+                dataset.data.forEach((value, index) => {
+                    const x = padding + (index * chartWidth / (data.labels.length - 1));
+                    const y = height - padding - ((value - minValue) / range) * chartHeight;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                ctx.stroke();
+                
+                // Draw points
+                dataset.data.forEach((value, index) => {
+                    const x = padding + (index * chartWidth / (data.labels.length - 1));
+                    const y = height - padding - ((value - minValue) / range) * chartHeight;
+                    
+                    ctx.fillStyle = dataset.color;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+            });
+            
+            // Draw x-axis labels
+            ctx.fillStyle = '#0f2a44';
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'center';
+            data.labels.forEach((label, index) => {
+                const x = padding + (index * chartWidth / (data.labels.length - 1));
+                ctx.fillText(label, x, height - 20);
+            });
+            
+            // Draw legend
+            data.datasets.forEach((dataset, index) => {
+                const legendY = 20 + index * 20;
+                
+                ctx.strokeStyle = dataset.color;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(20, legendY);
+                ctx.lineTo(35, legendY);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#0f2a44';
+                ctx.font = '11px Inter';
+                ctx.textAlign = 'left';
+                ctx.fillText(dataset.label, 40, legendY + 4);
+            });
         }
         
         function downloadReport() {
