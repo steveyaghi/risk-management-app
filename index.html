@@ -616,6 +616,11 @@
                 🚀 Generate Risk Register
             </button>
             
+            <!-- Debug button - remove after testing -->
+            <button class="btn" onclick="testButton()" style="margin-top: 10px; background: #666;">
+                🔧 Test Button (Debug)
+            </button>
+            
             <div class="status-indicator progress" id="generateProgress">
                 <strong>🔄 Generating your risk register...</strong><br>
                 This may take a few minutes. Please don't close this window.
@@ -1014,13 +1019,19 @@
 
         // Utility functions
         function showError(message) {
-            // Simple error display - could be enhanced with a proper modal
+            console.error('Error:', message);
             alert('Error: ' + message);
         }
 
         function showSuccess(message) {
-            // Simple success display - could be enhanced with a proper modal
+            console.log('Success:', message);
             alert('Success: ' + message);
+        }
+
+        // Test function to verify button works
+        function testButton() {
+            console.log('Button test function called');
+            showError('Button is working! Please fill out the form properly.');
         }
 
         // Initialize file input event listeners
@@ -1098,16 +1109,18 @@
             
             for (const fieldId of requiredFields) {
                 const field = document.getElementById(fieldId);
-                if (!field.value.trim()) {
-                    showError(`Please fill in the ${field.previousElementSibling.textContent.replace(' *', '')}`);
-                    field.focus();
+                if (!field || !field.value.trim()) {
+                    const fieldName = field ? field.previousElementSibling.textContent.replace(' *', '') : fieldId;
+                    showError(`Please fill in the ${fieldName} field`);
+                    if (field) field.focus();
                     return false;
                 }
             }
             
             const numRisks = parseInt(document.getElementById('numberOfRisks').value);
-            if (numRisks < 5 || numRisks > 50) {
+            if (isNaN(numRisks) || numRisks < 5 || numRisks > 50) {
                 showError('Number of risks must be between 5 and 50');
+                document.getElementById('numberOfRisks').focus();
                 return false;
             }
             
