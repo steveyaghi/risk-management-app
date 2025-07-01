@@ -315,7 +315,6 @@
             text-align: left;
         }
         
-        /* Dashboard Styles */
         .risk-dashboard {
             display: none;
             margin-top: 3rem;
@@ -367,143 +366,6 @@
             padding: 2rem;
         }
         
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .metric-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            border: 2px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-        
-        .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .metric-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #0f2a44;
-            margin-bottom: 0.5rem;
-        }
-        
-        .metric-label {
-            font-size: 0.9rem;
-            color: #718096;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .metric-detail {
-            font-size: 0.8rem;
-            color: #a0aec0;
-        }
-        
-        .charts-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .chart-container {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 2px solid #e2e8f0;
-        }
-        
-        .chart-container h3 {
-            color: #0f2a44;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-        
-        .insights-section {
-            margin-bottom: 3rem;
-        }
-        
-        .insights-section h3 {
-            color: #0f2a44;
-            margin-bottom: 1.5rem;
-            font-size: 1.4rem;
-        }
-        
-        .insights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .insight-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            border: 2px solid #e2e8f0;
-        }
-        
-        .insight-card.positive {
-            border-left: 4px solid #81c784;
-        }
-        
-        .insight-card.warning {
-            border-left: 4px solid #ffab40;
-        }
-        
-        .insight-card.improvement {
-            border-left: 4px solid #0f2a44;
-        }
-        
-        .insight-icon {
-            font-size: 1.5rem;
-            margin-top: 0.25rem;
-        }
-        
-        .insight-content h4 {
-            color: #0f2a44;
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        
-        .insight-content p {
-            color: #718096;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin: 0;
-        }
-        
-        .detailed-report {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 2rem;
-            border: 2px solid #e2e8f0;
-        }
-        
-        .detailed-report h3 {
-            color: #0f2a44;
-            margin-bottom: 1rem;
-            font-size: 1.4rem;
-        }
-        
-        .report-content {
-            color: #4a5568;
-            line-height: 1.6;
-            white-space: pre-wrap;
-        }
-        
-        /* Risk Table Styles */
         .risk-table-section {
             margin-bottom: 3rem;
             background: white;
@@ -599,6 +461,26 @@
             color: #0f2a44;
         }
         
+        .report-section {
+            margin-bottom: 3rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 2rem;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .report-section h3 {
+            color: #0f2a44;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+        
+        .report-content {
+            color: #4a5568;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -625,22 +507,9 @@
                 order: -1;
             }
             
-            .charts-section {
-                grid-template-columns: 1fr;
-            }
-            
             .dashboard-header {
                 flex-direction: column;
                 gap: 1rem;
-            }
-            
-            .table-container {
-                font-size: 0.8rem;
-            }
-            
-            .risk-table th,
-            .risk-table td {
-                padding: 8px;
             }
         }
     </style>
@@ -816,80 +685,471 @@
         <!-- Risk Dashboard Display -->
         <div class="risk-dashboard" id="riskDashboard">
             <div class="dashboard-header">
-                <h2>🛡️ Risk Analysis Dashboard</h2>
+                <h2 id="dashboardTitle">🛡️ Risk Analysis Dashboard</h2>
                 <div class="dashboard-actions">
-                    <button class="download-btn" onclick="downloadReport()">
-                        📄 Download Report
+                    <button class="download-btn" onclick="downloadGeneratedSpreadsheet()">
+                        📊 Download CSV
                     </button>
-                    <button class="download-btn" onclick="downloadDashboard()">
-                        📊 Export Dashboard
+                    <button class="download-btn" onclick="downloadGeneratedReport()">
+                        📄 Download Report
                     </button>
                 </div>
             </div>
             
             <div class="dashboard-content">
-                <!-- Key Metrics -->
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-value" id="totalRisksChange">+6</div>
-                        <div class="metric-label">Total Risks Change</div>
-                        <div class="metric-detail" id="riskCountDetail">45 → 51 risks</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="highRiskChange">+3</div>
-                        <div class="metric-label">High Risk Change</div>
-                        <div class="metric-detail" id="highRiskDetail">15 → 18 risks</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="newRisks">6</div>
-                        <div class="metric-label">New Risks Added</div>
-                        <div class="metric-detail">Identified in analysis</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="modifiedRisks">8</div>
-                        <div class="metric-label">Modified Risks</div>
-                        <div class="metric-detail">Updated assessments</div>
+                <!-- AI Report Section -->
+                <div class="report-section">
+                    <h3>📋 AI Risk Analysis Report</h3>
+                    <div class="report-content" id="aiReportContent">
+                        Your AI-generated risk analysis report will appear here...
                     </div>
                 </div>
                 
-                <!-- Charts Section -->
-                <div class="charts-section">
-                    <div class="chart-container">
-                        <h3>Risk Level Distribution</h3>
-                        <canvas id="riskLevelChart" width="400" height="200"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Risk Evolution Timeline</h3>
-                        <canvas id="riskTimelineChart" width="400" height="200"></canvas>
+                <!-- Risk Table Section -->
+                <div class="risk-table-section">
+                    <h3>📊 Risk Register Details</h3>
+                    <div class="table-container">
+                        <table class="risk-table">
+                            <thead>
+                                <tr>
+                                    <th>Risk ID</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Probability</th>
+                                    <th>Impact</th>
+                                    <th>Risk Score</th>
+                                    <th>Risk Level</th>
+                                    <th>Owner</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="riskTableBody">
+                                <!-- Risk data will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file inputs for uploads -->
+    <input type="file" id="fileInput1" accept=".xlsx,.xls,.csv" style="display: none;">
+    <input type="file" id="fileInput2" accept=".xlsx,.xls,.csv" style="display: none;">
+
+    <script>
+        // Global variables
+        let currentMode = 'manual';
+        let uploadedFiles = { file1: null, file2: null };
+        let generatedRiskData = null;
+        let generatedReport = null;
+        let generatedProjectInfo = null;
+
+        // Mode selection
+        function selectMode(mode) {
+            currentMode = mode;
+            
+            // Update mode cards
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.mode-card').classList.add('active');
+            
+            // Show/hide sections
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            if (mode === 'manual') {
+                document.getElementById('manual-section').classList.add('active');
+            } else {
+                document.getElementById('compare-section').classList.add('active');
+            }
+            
+            // Hide dashboard
+            document.getElementById('riskDashboard').style.display = 'none';
+            hideAllStatusIndicators();
+        }
+
+        // File upload handling
+        function selectFile(fileNumber) {
+            const input = document.getElementById(`fileInput${fileNumber}`);
+            input.click();
+            
+            input.onchange = function(e) {
+                const result = await response.json();
                 
-                <!-- Additional Visualizations -->
-                <div class="charts-section">
-                    <div class="chart-container">
-                        <h3>Risk Category Breakdown</h3>
-                        <canvas id="categoryChart" width="400" height="200"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Risk Trend Analysis</h3>
-                        <canvas id="trendChart" width="400" height="200"></canvas>
-                    </div>
-                </div>
+                if (result.success) {
+                    generatedRiskData = result.risks || [];
+                    generatedReport = result.report || 'Risk register generated successfully';
+                    generatedProjectInfo = result.project_info || {};
+                    
+                    showStatus('success', 'generate');
+                    displayGeneratedRiskRegister();
+                } else {
+                    throw new Error(result.message || 'Generation failed');
+                }
                 
-                <!-- Key Strategic Insights -->
-                <div class="insights-section">
-                    <h3>💡 Key Strategic Insights</h3>
-                    <div class="insights-grid">
-                        <div class="insight-card positive">
-                            <div class="insight-icon">✅</div>
-                            <div class="insight-content">
-                                <h4>Proactive Risk Management</h4>
-                                <p id="positiveInsight">Enhanced risk identification showing improved risk awareness and management maturity</p>
-                            </div>
-                        </div>
-                        <div class="insight-card warning">
-                            <div class="insight-icon">⚠️</div>
-                            <div class="insight-content">
-                                <h4>Areas Requiring Attention</h4>
-                                <p id="warningInsight">Increase in high-level risks requires immediate strategic focus and mitigation planning</p>
-                            </div>
+            } catch (error) {
+                console.error('Error generating risk register:', error);
+                showStatus('error', 'generate');
+                showError('Failed to generate risk register. Please try again.');
+            } finally {
+                btn.classList.remove('processing');
+                btn.disabled = false;
+            }
+        }
+
+        // Display generated risk register
+        function displayGeneratedRiskRegister() {
+            const dashboard = document.getElementById('riskDashboard');
+            const title = document.getElementById('dashboardTitle');
+            const reportContent = document.getElementById('aiReportContent');
+            
+            // Update title
+            title.textContent = `🛡️ ${generatedProjectInfo.project_name || 'Generated Risk Register'}`;
+            
+            // Display AI report
+            reportContent.textContent = generatedReport;
+            
+            // Populate risk table
+            populateGeneratedRiskTable();
+            
+            // Show dashboard
+            dashboard.style.display = 'block';
+            
+            // Scroll to dashboard
+            dashboard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Populate risk table with generated data
+        function populateGeneratedRiskTable() {
+            const tbody = document.getElementById('riskTableBody');
+            tbody.innerHTML = '';
+            
+            if (!generatedRiskData || generatedRiskData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">No risk data available</td></tr>';
+                return;
+            }
+            
+            generatedRiskData.forEach(risk => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${risk.Risk_ID || 'N/A'}</td>
+                    <td style="max-width: 200px; word-wrap: break-word;">${risk.Title || 'N/A'}</td>
+                    <td>${risk.Category || 'N/A'}</td>
+                    <td>${risk.Probability || 'N/A'}</td>
+                    <td>${risk.Impact || 'N/A'}</td>
+                    <td>${risk.Risk_Score || 'N/A'}</td>
+                    <td><span class="risk-level-badge" style="background-color: ${getRiskLevelColor(risk.Risk_Level)}">${risk.Risk_Level || 'N/A'}</span></td>
+                    <td>${risk.Owner || 'N/A'}</td>
+                    <td>${risk.Status || 'N/A'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Get risk level color
+        function getRiskLevelColor(level) {
+            const colors = {
+                'Critical': '#d32f2f',
+                'High': '#f57c00',
+                'Medium': '#fbc02d',
+                'Low': '#388e3c',
+                'Very Low': '#1976d2'
+            };
+            return colors[level] || '#757575';
+        }
+
+        // Compare registers function
+        async function compareRegisters() {
+            if (!uploadedFiles.file1 || !uploadedFiles.file2) {
+                showError('Please upload both risk register files');
+                return;
+            }
+            
+            const btn = document.getElementById('compareBtn');
+            btn.classList.add('processing');
+            btn.disabled = true;
+            
+            showStatus('progress', 'compare');
+            
+            try {
+                const formData = new FormData();
+                formData.append('mode', 'compare_registers');
+                formData.append('file1', uploadedFiles.file1);
+                formData.append('file2', uploadedFiles.file2);
+                formData.append('comparisonContext', document.getElementById('comparisonContext').value);
+                
+                const response = await fetch('https://steveyaghi.app.n8n.cloud/webhook/risk-webapp', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('success', 'compare');
+                    displayComparisonResults(result);
+                } else {
+                    throw new Error(result.message || 'Comparison failed');
+                }
+                
+            } catch (error) {
+                console.error('Error comparing registers:', error);
+                showStatus('error', 'compare');
+                showError('Failed to compare risk registers. Please try again.');
+            } finally {
+                btn.classList.remove('processing');
+                btn.disabled = false;
+            }
+        }
+
+        // Display comparison results
+        function displayComparisonResults(result) {
+            const dashboard = document.getElementById('riskDashboard');
+            const title = document.getElementById('dashboardTitle');
+            const reportContent = document.getElementById('aiReportContent');
+            
+            // Update title
+            title.textContent = '⚖️ Risk Register Comparison Analysis';
+            
+            // Display comparison report
+            reportContent.textContent = result.report || 'Comparison analysis completed';
+            
+            // Update download buttons for comparison
+            const downloadButtons = document.querySelector('.dashboard-actions');
+            downloadButtons.innerHTML = `
+                <button class="download-btn" onclick="downloadComparisonReport()">
+                    📄 Download Comparison Report
+                </button>
+                <button class="download-btn" onclick="downloadComparisonData()">
+                    📊 Download Analysis Data
+                </button>
+            `;
+            
+            // Show dashboard
+            dashboard.style.display = 'block';
+            
+            // Scroll to dashboard
+            dashboard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Download functions
+        function downloadGeneratedSpreadsheet() {
+            if (!generatedRiskData || generatedRiskData.length === 0) {
+                showError('No risk data available to download');
+                return;
+            }
+            
+            // Create CSV content
+            const headers = ['Risk_ID', 'Title', 'Description', 'Category', 'Probability', 'Impact', 'Risk_Score', 'Risk_Level', 'Owner', 'Mitigation', 'Action', 'Target_Date', 'Status'];
+            const csvContent = [
+                headers.join(','),
+                ...generatedRiskData.map(risk => 
+                    headers.map(header => {
+                        const value = risk[header] || '';
+                        // Escape commas and quotes in CSV
+                        return `"${String(value).replace(/"/g, '""')}"`;
+                    }).join(',')
+                )
+            ].join('\n');
+            
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Risk_Register_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function downloadGeneratedReport() {
+            if (!generatedReport) {
+                showError('No report available to download');
+                return;
+            }
+            
+            // Create Word document content
+            const docContent = `
+                RISK MANAGEMENT REPORT
+                ${generatedProjectInfo.project_name || 'Generated Risk Register'}
+                Generated on: ${new Date().toLocaleDateString()}
+                
+                ${generatedReport}
+                
+                RISK REGISTER SUMMARY
+                Total Risks: ${generatedRiskData ? generatedRiskData.length : 0}
+                
+                This report was generated by the Haskoning Risk Management System.
+            `;
+            
+            const blob = new Blob([docContent], { type: 'application/msword' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Risk_Report_${new Date().toISOString().split('T')[0]}.doc`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function downloadComparisonReport() {
+            // Implement comparison report download
+            showError('Comparison report download functionality will be available soon');
+        }
+
+        function downloadComparisonData() {
+            // Implement comparison data download
+            showError('Comparison data download functionality will be available soon');
+        }
+
+        // Utility functions
+        function showError(message) {
+            // Simple error display - could be enhanced with a proper modal
+            alert('Error: ' + message);
+        }
+
+        function showSuccess(message) {
+            // Simple success display - could be enhanced with a proper modal
+            alert('Success: ' + message);
+        }
+
+        // Initialize file input event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up file input change handlers
+            document.getElementById('fileInput1').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    uploadedFiles.file1 = file;
+                    displayFileInfo(1, file);
+                    updateCompareButton();
+                }
+            });
+            
+            document.getElementById('fileInput2').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    uploadedFiles.file2 = file;
+                    displayFileInfo(2, file);
+                    updateCompareButton();
+                }
+            });
+        });
+    </script>
+</body>
+</html> file = e.target.files[0];
+                if (file) {
+                    uploadedFiles[`file${fileNumber}`] = file;
+                    displayFileInfo(fileNumber, file);
+                    updateCompareButton();
+                }
+            };
+        }
+
+        function displayFileInfo(fileNumber, file) {
+            const slot = document.getElementById(`fileSlot${fileNumber}`);
+            const info = document.getElementById(`file${fileNumber}Info`);
+            
+            slot.classList.add('filled');
+            info.style.display = 'block';
+            info.innerHTML = `
+                <strong>${file.name}</strong><br>
+                Size: ${(file.size / 1024 / 1024).toFixed(2)} MB<br>
+                Type: ${file.type || 'Unknown'}
+            `;
+        }
+
+        function updateCompareButton() {
+            const btn = document.getElementById('compareBtn');
+            if (uploadedFiles.file1 && uploadedFiles.file2) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        // Status indicator management
+        function showStatus(type, section = 'generate') {
+            hideAllStatusIndicators();
+            const indicator = document.getElementById(`${section}${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            if (indicator) {
+                indicator.classList.add('show');
+            }
+        }
+
+        function hideAllStatusIndicators() {
+            document.querySelectorAll('.status-indicator').forEach(indicator => {
+                indicator.classList.remove('show');
+            });
+        }
+
+        // Form validation
+        function validateGenerateForm() {
+            const requiredFields = ['projectName', 'projectType', 'projectTimeline', 'countryRegion', 'riskMethodology', 'numberOfRisks', 'budgetRange'];
+            
+            for (const fieldId of requiredFields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    showError(`Please fill in the ${field.previousElementSibling.textContent.replace(' *', '')}`);
+                    field.focus();
+                    return false;
+                }
+            }
+            
+            const numRisks = parseInt(document.getElementById('numberOfRisks').value);
+            if (numRisks < 5 || numRisks > 50) {
+                showError('Number of risks must be between 5 and 50');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Main generate function
+        async function generateNewRiskRegister() {
+            if (!validateGenerateForm()) {
+                return;
+            }
+            
+            const btn = document.getElementById('generateBtn');
+            btn.classList.add('processing');
+            btn.disabled = true;
+            
+            showStatus('progress', 'generate');
+            
+            // Collect form data
+            const formData = {
+                mode: 'generate_new',
+                projectName: document.getElementById('projectName').value,
+                projectType: document.getElementById('projectType').value,
+                projectTimeline: document.getElementById('projectTimeline').value,
+                countryRegion: document.getElementById('countryRegion').value,
+                riskMethodology: document.getElementById('riskMethodology').value,
+                numberOfRisks: parseInt(document.getElementById('numberOfRisks').value),
+                budgetRange: document.getElementById('budgetRange').value,
+                additionalContext: document.getElementById('additionalContext').value
+            };
+            
+            try {
+                const response = await fetch('https://steveyaghi.app.n8n.cloud/webhook/risk-webapp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const
